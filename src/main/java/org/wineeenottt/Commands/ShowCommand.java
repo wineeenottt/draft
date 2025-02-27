@@ -3,23 +3,29 @@ package org.wineeenottt.Commands;
 import org.wineeenottt.Collection.CollectionManager;
 
 /**
- * Команда, показывыющая содержимое всех элементов коллекции
+ * Класс ShowCommand реализует интерфейс Command и представляет команду,
+ * которая отображает подробное содержимое всех элементов коллекции.
  */
 public class ShowCommand implements Command {
+
     /**
-     * Поле, хранящее ссылку на объект класса CollectionManager
+     * Поле, хранящее ссылку на объект класса CollectionManager.
+     * Используется для доступа к методам управления коллекцией и отображения её элементов.
      */
     private CollectionManager collectionManager;
 
     /**
-     * Конструктор класса
+     * Конструктор класса ShowCommand.
+     *
+     * @param collectionManager объект класса CollectionManager, используемый для управления коллекцией.
      */
     public ShowCommand(CollectionManager collectionManager) {
         this.collectionManager = collectionManager;
     }
 
     /**
-     * Метод, исполняющий команду. Показывает подробное содержание содержимого коллекции
+     * Метод, выполняющий команду. Отображает подробное содержимое всех элементов коллекции.
+     * Если коллекция пуста, выводится соответствующее сообщение.
      */
     @Override
     public void execute() {
@@ -27,12 +33,12 @@ public class ShowCommand implements Command {
     }
 
     /**
-     * Метод, возвращающий описание команды
+     * Метод, возвращающий описание команды.
+     *
+     * @return строка с описанием команды, указывающая, что команда отображает подробное содержимое всех элементов коллекции.
      */
     @Override
     public String getDescription() {
-        return " показывает подробное содержимое всех элементов коллекции";
+        return "показывает подробное содержимое всех элементов коллекции";
     }
 }
-
-

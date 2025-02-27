@@ -5,22 +5,35 @@ import org.wineeenottt.Collection.Location;
 import org.wineeenottt.Collection.Route;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Класс для работы с файлами, содержащими данные о маршрутах.
+ * Предоставляет методы для чтения и записи данных в формате CSV.
+ */
 public class FileManager {
 
+    /**
+     * Парсит CSV файл и возвращает набор маршрутов.
+     *
+     * @param filePath путь к CSV файлу
+     * @return набор маршрутов, содержащихся в файле
+     * @throws IOException если произошла ошибка ввода-вывода при чтении файла
+     */
     public Set<Route> parseCsvFile(String filePath) throws IOException {
         Set<Route> routes = new HashSet<>();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(filePath));
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             boolean isFirstLine = true;
             String line;
             while ((line = reader.readLine()) != null) {
                 if (isFirstLine) {
                     isFirstLine = false;
-                    continue; // Пропускаем заголовок
+                    continue; // Skip header
                 }
                 String[] fields = line.split(",");
                 if (fields.length < 14) {
@@ -59,6 +72,12 @@ public class FileManager {
         return routes;
     }
 
+    /**
+     * Записывает набор маршрутов в CSV файл.
+     *
+     * @param filePath путь к файлу, в который будут записаны данные
+     * @param routes набор маршрутов для записи
+     */
     public void parseToCsv(String filePath, Set<Route> routes) {
         try (FileWriter writer = new FileWriter(filePath)) {
             // Записываем заголовки
@@ -85,16 +104,14 @@ public class FileManager {
             System.err.println("Ошибка при записи в файл: " + e.getMessage());
         }
     }
+
     /**
-     * Метод для поиска максимального ID среди маршрутов.
+     * Находит максимальный ID среди маршрутов.
      *
-     * @param routes Коллекция маршрутов
-     * @return Максимальный ID или -1, если коллекция пуста
+     * @param routes набор маршрутов
+     * @return максимальный ID или -1, если набор пуст
      */
     public int findMaxId(Set<Route> routes) {
         return routes.stream().mapToInt(Route::getId).max().orElse(-1);
     }
 }
-
-
-

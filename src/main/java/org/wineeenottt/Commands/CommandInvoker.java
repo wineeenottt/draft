@@ -30,6 +30,7 @@ public class CommandInvoker {
      * Поле, хранящее строку, в которой записан адрес файла, куда следует сохранять полученную коллекцию (экземпляры коллекции)
      */
     private String inputFile;
+    private String inputData;
     /**
      * Поле, хранящее ссылку на объект, осуществляющий чтение полей из указанного в userIO потока ввода
      */
@@ -52,7 +53,6 @@ public class CommandInvoker {
         this.userIO = userIO;
         this.inputFile = inputFile;
         this.routeFieldsReader = routeFieldsReader;
-
         hashMapCommands = new HashMap<>();
         this.script = new ExecuteScriptCommand.Script();
         this.putCommands();
@@ -62,14 +62,16 @@ public class CommandInvoker {
      * Использование скрипта
      * Конструктор класса. Внутри вызывается метод putCommands, инициализируется поле, в которое присваивается существующий объект класса ExecuteScript.Script
      */
-    public CommandInvoker(CollectionManager collectionManager, UserIO userIO, RouteFieldsReader routeFieldsReader, ExecuteScriptCommand.Script script) {
+    public CommandInvoker(CollectionManager collectionManager, UserIO userIO, RouteFieldsReader routeFieldsReader, ExecuteScriptCommand.Script script, String inputFile, String inputData) {
         this.collectionManager = collectionManager;
         this.userIO = userIO;
         this.routeFieldsReader = routeFieldsReader;
-
+        routeFieldsReader.setInputData(inputData);
+        this.inputFile = inputFile;
         hashMapCommands = new HashMap<>();
         this.script = script;
         this.putCommands();
+        this.inputData = inputData;
     }
 
     /**
@@ -88,11 +90,10 @@ public class CommandInvoker {
         hashMapCommands.put("sum_of_dictance", new SumOfDistanceCommand(collectionManager));
         hashMapCommands.put("add", new AddCommand(collectionManager, routeFieldsReader));
         hashMapCommands.put("add_if_max", new AddIfMaxCommand(collectionManager, routeFieldsReader, userIO));
-
         hashMapCommands.put("update", new UpdateElementCommand(collectionManager, userIO));
         hashMapCommands.put("remove_by_id", new RemoveByIdCommand(collectionManager));
-        hashMapCommands.put("execute_script", new ExecuteScriptCommand(collectionManager, routeFieldsReader, script));
-        hashMapCommands.put("remove_greater", new RemoveGreaterCommand(collectionManager,routeFieldsReader));
+        hashMapCommands.put("execute_script", new ExecuteScriptCommand(collectionManager, routeFieldsReader, script, inputFile, inputData));
+        hashMapCommands.put("remove_greater", new RemoveGreaterCommand(collectionManager, routeFieldsReader));
     }
 
     /**
@@ -125,11 +126,7 @@ public class CommandInvoker {
     public void addToCommandsHistory(String string) {
         if (commandsHistoryList.size() == 11) {
             commandsHistoryList.remove(0);
-            commandsHistoryList.add(string);
-        } else {
-            commandsHistoryList.add(string);
         }
+        commandsHistoryList.add(string);
     }
 }
-
-

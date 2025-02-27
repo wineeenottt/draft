@@ -43,7 +43,7 @@ public class CollectionManager {
      */
     public void showElementsCollection() {
         if (hashSetRouteCollection.isEmpty()) {
-            System.out.println("Коллекция пуста.");
+            System.out.println("Коллекция пуста");
         } else {
             for (Route route : hashSetRouteCollection) {
                 System.out.println(route.toString());
@@ -73,11 +73,18 @@ public class CollectionManager {
     /**
      * Метод, удаляющий из коллекции все элемента, превышающий заданный
      */
-    public void removeGreater(int id) {
+    public void removeGreater(Integer id) {
         if (hashSetRouteCollection.isEmpty()) {
             System.out.println("Коллекция пуста");
         } else {
-            hashSetRouteCollection.removeIf(route -> route.getId() > id);
+            HashSet<Route> toRemove = new HashSet<>();
+
+            for (Route route : hashSetRouteCollection) {
+                if (route.getId() > id) {
+                    toRemove.add(route);
+                }
+            }
+            hashSetRouteCollection.removeAll(toRemove);
         }
     }
 
@@ -112,12 +119,21 @@ public class CollectionManager {
     }
 
     public void removeById(Integer id) {
-        if (hashSetRouteCollection.isEmpty()) {
-            System.out.println("Коллекция пуста.");
-        } else {
-            hashSetRouteCollection.removeIf(route -> route.getId().equals(id));
+            if (hashSetRouteCollection.isEmpty()) {
+                System.out.println("Коллекция пуста");
+            } else {
+                Route toRemove = null;
+                for (Route route :  hashSetRouteCollection) {
+                    if (route.getId().equals(id)) {
+                        toRemove = route;
+                        break;
+                    }
+                }
+                if (toRemove != null) {
+                    hashSetRouteCollection.remove(toRemove);
+                }
+            }
         }
-    }
 
     public Long sumOfDistance() {
         if (hashSetRouteCollection.isEmpty()) {
@@ -158,8 +174,6 @@ public class CollectionManager {
             Route route = new Route(id, name, coordinates, creationDate, from, to, distance);
             hashSetRouteCollection.add(route);
             maxId = id;
-        } else {
-            System.out.println("Переданный ID не больше текущего максимального ID. Маршрут не добавлен.");
         }
     }
 
@@ -228,8 +242,8 @@ public class CollectionManager {
     public String getFieldNames() {
         return "Список всех полей: \n" +
                 "Name (String)\n" +
-                "Coordinate_x (Double)\n" +
-                "Coordinate_y (Float)\n" +
+                "CoordinateX (Double)\n" +
+                "CoordinateY (Float)\n" +
                 "LocationFromX (Float)\n" +
                 "LocationFromY (Integer)\n" +
                 "LocationFromZ (Double)\n" +
@@ -241,7 +255,6 @@ public class CollectionManager {
                 "Distance (Long)\n";
     }
 
-    // Методы валидации
     private String validateString(String value) {
         if (value.isEmpty()) throw new NullPointerException("Значение не может быть пустым");
         return value;

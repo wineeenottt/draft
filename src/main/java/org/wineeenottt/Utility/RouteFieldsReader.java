@@ -3,41 +3,56 @@ package org.wineeenottt.Utility;
 import org.wineeenottt.Collection.CollectionManager;
 import org.wineeenottt.Collection.Coordinates;
 import org.wineeenottt.Collection.Location;
-import org.wineeenottt.Collection.Route;
 import org.wineeenottt.Exceptions.ValidValuesRangeException;
 import org.wineeenottt.IO.UserIO;
 
-import java.time.Instant;
-import java.time.ZonedDateTime;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
-public class          RouteFieldsReader {
+public class RouteFieldsReader {
 
     private final UserIO userIO;
-    CollectionManager collectionManager;
+    private CollectionManager collectionManager;
+    private Scanner scanner;
+    private String[] inputDataArray;
+    private int inputIndex = 0;
 
-    /**
-     * Конструктор класса
-     */
     public RouteFieldsReader(UserIO userIO, CollectionManager collectionManager) {
         this.userIO = userIO;
+        this.collectionManager = collectionManager;
     }
 
-    public Route read(Integer id) {
+    public void setInputData(String fileName) {
+        try {
+            scanner = new Scanner(new File(fileName));
+        } catch (FileNotFoundException e) {
+            System.out.println("Не удалось открыть файл: " + fileName);
+            scanner = null;
+        }
+        inputDataArray = null;
+        inputIndex = 0;
+    }
 
-        String i = Instant.now().toString();
-        Location fromLocation = readLocation();
-        Location toLocation = readLocation();
-        return new Route(id, readName(), readCoordinates(), ZonedDateTime.parse(i).plusHours(3), fromLocation, toLocation, readDistance());
+    private String readNextValue(String val) {
+        while ((inputDataArray == null || inputIndex >= inputDataArray.length) && scanner != null && scanner.hasNextLine()) {
+            inputDataArray = scanner.nextLine().trim().split(",");
+            inputIndex = 0;
+        }
+
+        if (inputDataArray != null && inputIndex < inputDataArray.length) {
+            return inputDataArray[inputIndex++].trim();
+        }
+
+        userIO.printCommandText(val);
+        return userIO.readLine().trim();
     }
 
     public String readName() {
-        String str;
         while (true) {
-            userIO.printCommandText("Name (not null): ");
-            str = userIO.readLine().trim();
-            if (str.isEmpty()) {
-                userIO.printCommandError("\nЗначение поля не может быть null или пустой строкой\n");
-            } else return str;
+            String str = readNextValue("Name (not null): ");
+            if (!str.isEmpty()) return str;
+            userIO.printCommandError("Значение поля не может быть null или пустой строкой\n");
         }
     }
 
@@ -46,20 +61,14 @@ public class          RouteFieldsReader {
     }
 
     public Double readCoordinateX() {
-        double x;
         while (true) {
             try {
-                userIO.printCommandText("CoordinateX (Double & x <= 750): ");
-                String str = userIO.readLine().trim();
-                if (str.isEmpty()) continue;
-                else {
-                    x = Double.parseDouble(str);
-                    if (x > 750) throw new ValidValuesRangeException();
-                    else return x;
-                }
-            } catch (ValidValuesRangeException ex) {
+                double x = Double.parseDouble(readNextValue("CoordinateX (Double & x <= 750): "));
+                if (x > 750) throw new ValidValuesRangeException();
+                return x;
+            } catch (ValidValuesRangeException e) {
                 System.out.println("Координата x имеет максимальное значение - 750");
-            } catch (NumberFormatException ex) {
+            } catch (NumberFormatException e) {
                 System.err.println("Число должно быть типа Double");
             }
         }
@@ -86,77 +95,53 @@ public class          RouteFieldsReader {
     }
 
     public String readLocationName() {
-        String str;
         while (true) {
-            userIO.printCommandText("LocationName (not null): ");
-            str = userIO.readLine().trim();
-            if (str.isEmpty()) {
-                userIO.printCommandError("\nЗначение поля не может быть null или пустой строкой\n");
-            } else return str;
+            String str = readNextValue("LocationName (not null): ");
+            if (!str.isEmpty()) return str;
+            userIO.printCommandError("Значение поля не может быть null или пустой строкой\n");
         }
     }
 
     public long readDistance() {
-        long distance;
         while (true) {
             try {
-                userIO.printCommandText("Distance (Long > 1): ");
-                String str = userIO.readLine().trim();
-                if (str.isEmpty()) continue;
-                else {
-                    distance = Long.parseLong(str);
-                    if (distance <= 1) throw new ValidValuesRangeException();
-                    return distance;
-                }
-            } catch (ValidValuesRangeException ex) {
+                long distance = Long.parseLong(readNextValue("Distance (Long > 1): "));
+                if (distance <= 1) throw new ValidValuesRangeException();
+                return distance;
+            } catch (ValidValuesRangeException e) {
                 System.out.println("Distance должно быть больше 1");
-            } catch (NumberFormatException ex) {
+            } catch (NumberFormatException e) {
                 System.err.println("Число должно быть типа Long");
             }
         }
     }
 
-    private float readFloat(String prompt) {
-        float value;
+    private float readFloat(String val) {
         while (true) {
             try {
-                userIO.printCommandText(prompt);
-                String str = userIO.readLine().trim();
-                if (str.isEmpty()) continue;
-                value = Float.parseFloat(str);
-                return value;
-            } catch (NumberFormatException ex) {
+                return Float.parseFloat(readNextValue(val));
+            } catch (NumberFormatException e) {
                 System.err.println("Ввод должен быть типа Float");
             }
         }
     }
 
-    public int readInt(String prompt) {
-        int value;
+    private double readDouble(String val) {
         while (true) {
             try {
-                userIO.printCommandText(prompt);
-                String str = userIO.readLine().trim();
-                if (str.isEmpty()) continue;
-                value = Integer.parseInt(str);
-                return value;
-            } catch (NumberFormatException ex) {
-                System.err.println("Ввод должен быть типа Integer");
+                return Double.parseDouble(readNextValue(val));
+            } catch (NumberFormatException e) {
+                System.err.println("Ввод должен быть типа Double");
             }
         }
     }
 
-    private double readDouble(String prompt) {
-        double value;
+    public int readInt(String val) {
         while (true) {
             try {
-                userIO.printCommandText(prompt);
-                String str = userIO.readLine().trim();
-                if (str.isEmpty()) continue;
-                value = Double.parseDouble(str);
-                return value;
-            } catch (NumberFormatException ex) {
-                System.err.println("Ввод должен быть типа Double");
+                return Integer.parseInt(readNextValue(val));
+            } catch (NumberFormatException e) {
+                System.err.println("Ввод должен быть типа Integer");
             }
         }
     }

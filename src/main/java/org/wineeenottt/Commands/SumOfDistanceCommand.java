@@ -2,21 +2,30 @@ package org.wineeenottt.Commands;
 
 import org.wineeenottt.Collection.CollectionManager;
 
-public class SumOfDistanceCommand implements Command{
+/**
+ * Класс SumOfDistanceCommand реализует интерфейс Command и представляет команду,
+ * которая вычисляет и выводит сумму значений поля distance для всех элементов коллекции.
+ */
+public class SumOfDistanceCommand implements Command {
+
     /**
-     * Поле, хранящее ссылку на объект класса CollectionManager
+     * Поле, хранящее ссылку на объект класса CollectionManager.
+     * Используется для доступа к методам управления коллекцией и вычисления суммы расстояний.
      */
     private final CollectionManager collectionManager;
 
     /**
-     * Конструктор класса. Хранит ссылку на созданный в объекте Application объект CollectionManager
+     * Конструктор класса SumOfDistanceCommand.
+     *
+     * @param collectionManager объект класса CollectionManager, используемый для управления коллекцией.
      */
     public SumOfDistanceCommand(CollectionManager collectionManager) {
         this.collectionManager = collectionManager;
     }
 
     /**
-     * Метод, исполняющий команду sumOfDistance
+     * Метод, выполняющий команду. Вычисляет сумму значений поля distance для всех элементов коллекции
+     * и выводит результат на экран.
      */
     @Override
     public void execute() {
@@ -25,12 +34,13 @@ public class SumOfDistanceCommand implements Command{
     }
 
     /**
-     * Описание команды
+     * Метод, возвращающий описание команды.
+     *
+     * @return строка с описанием команды, указывающая, что команда выводит сумму значений поля distance
+     * для всех элементов коллекции.
      */
     @Override
     public String getDescription() {
-        return " выводит сумму значений поля distance для всех элементов коллекции";
+        return "выводит сумму значений поля distance для всех элементов коллекции";
     }
 }
-
-

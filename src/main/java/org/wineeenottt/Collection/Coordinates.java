@@ -65,7 +65,7 @@ public class Coordinates {
     /**
      * Возвращает строковое представление координат.
      *
-     * @return строковое представление координат в формате: "Coordinates{x=..., y=...}".
+     * @return строковое представление координат.
      */
     @Override
     public String toString() {

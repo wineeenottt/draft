@@ -12,34 +12,42 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+/**
+ * Класс Application является основным классом программы, который управляет запуском и выполнением команд.
+ * Он отвечает за инициализацию всех необходимых компонентов, таких как менеджер коллекций, парсер CSV,
+ * ввод/вывод данных и обработчик команд.
+ */
 public class Application {
+
     /**
-     * Менеджер коллекций
+     * Менеджер коллекций, управляющий данными коллекции маршрутов.
      */
     private CollectionManager collectionManager;
+
     /**
-     * Менеджер файлов
-     */
-    //private FileManager fileManager;
-    /**
-     * CSV парсер
+     * Парсер CSV, используемый для чтения данных из файла.
      */
     private FileManager csvParser;
+
     /**
-     * Объект для ввода/вывода команд
+     * Объект для ввода/вывода данных, взаимодействующий с пользователем.
      */
     private UserIO userIO;
+
     /**
-     * Объект для исполнения команд
+     * Обработчик команд, выполняющий команды, введенные пользователем.
      */
     private CommandInvoker commandInvoker;
+
     /**
-     * Объект для чтения полей класса Route
+     * Объект для чтения полей класса Route.
      */
     private RouteFieldsReader routeFieldsReader;
 
     /**
-     * Метод, выполняющий запуск программы. Через него происходит работа всей программы.
+     * Метод, выполняющий запуск программы. Инициализирует необходимые компоненты и загружает данные из файла.
+     *
+     * @param inputFile путь к файлу, из которого будут загружены данные.
      */
     public void start(String inputFile) {
         csvParser = new FileManager();
@@ -49,7 +57,7 @@ public class Application {
         try {
             File ioFile = new File(inputFile);
             if (!ioFile.exists() || ioFile.isDirectory() || !ioFile.canRead()) {
-                throw new IOException("Error with file");
+                throw new IOException("Ошибка с файлом");
             }
 
             // Чтение маршрутов из CSV
@@ -76,10 +84,11 @@ public class Application {
     }
 
     /**
-     * Метод, выполняющий циклическое чтение команд из строки ввода
+     * Метод, выполняющий циклическое чтение команд из строки ввода.
+     * Программа продолжает выполнение, пока пользователь не завершит её вводом соответствующей команды.
      */
     public void cycle() {
-        userIO.printCommandText("Программа была запущена.\n");
+        userIO.printCommandText("Программа была запущена\n");
         while (true) {
             userIO.printCommandText("\nВведите название команды:\n");
             userIO.printPreamble();

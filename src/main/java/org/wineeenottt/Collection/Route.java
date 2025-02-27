@@ -7,7 +7,7 @@ import java.util.Comparator;
  * Класс Route представляет маршрут с координатами, пунктами отправления и назначения.
  * Хранит информацию о дате создания и расстоянии.
  */
-public class Route implements Comparable<Route> {
+public class Route {
     /**
      * Идентификатор маршрута. Поле не может быть null. Значение поля должно быть больше 0 и уникальным.
      * Значение этого поля генерируется автоматически.
@@ -192,23 +192,9 @@ public class Route implements Comparable<Route> {
     }
 
     /**
-     * Сравнивает маршруты по расстоянию, а затем по идентификатору.
-     *
-     * @param other Другой маршрут для сравнения.
-     * @return Результат сравнения: отрицательное число, если текущий маршрут меньше,
-     *         положительное число, если текущий маршрут больше, и 0, если маршруты равны.
-     */
-    @Override
-    public int compareTo(Route other) {
-        return Comparator.comparingLong(Route::getDistance)
-                .thenComparingInt(Route::getId)
-                .compare(this, other);
-    }
-
-    /**
      * Возвращает строковое представление маршрута.
      *
-     * @return Строковое представление маршрута.
+     * @return строковое представление маршрута.
      */
     @Override
     public String toString() {

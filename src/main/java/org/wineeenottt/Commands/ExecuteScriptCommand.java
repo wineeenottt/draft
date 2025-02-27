@@ -39,13 +39,18 @@ public class ExecuteScriptCommand implements CommandWithArguments {
      */
     private Script script;
 
+    private String inputFile;
+    private String inputData;
+
     /**
      * Конструктор класса
      */
-    public ExecuteScriptCommand(CollectionManager collectionManager, RouteFieldsReader routeFieldsReader, Script script) {
+    public ExecuteScriptCommand(CollectionManager collectionManager, RouteFieldsReader routeFieldsReader, Script script, String inputFile, String inputData) {
         this.collectionManager = collectionManager;
         this.routeFieldsReader = routeFieldsReader;
         this.script = script;
+        this.inputFile = inputFile;
+        this.inputData = inputData;
     }
 
     /**
@@ -55,20 +60,26 @@ public class ExecuteScriptCommand implements CommandWithArguments {
     @Override
     public void execute() {
         try {
-            if (commandArguments.length != 1) {
-                throw new IllegalArgumentException("Скрипт не передан в качестве аргумента команды, либо количество аргументов больше 1.");
+            if (commandArguments.length != 2) {
+                throw new IllegalArgumentException("Скрипт не передан в качестве аргумента команды, либо количество аргументов больше 2");
             }
 
             scriptPath = commandArguments[0];
 
             if (script.scriptPaths.contains(scriptPath)) {
-                throw new RecoursiveCallException("Скрипт " + scriptPath + " уже выполняется (Рекурсивный вызов).");
+                throw new RecoursiveCallException("Скрипт " + scriptPath + " уже выполняется (Рекурсивный вызов)");
             }
             script.putScript(scriptPath);
 
             File ioFile = new File(scriptPath);
             if (!ioFile.exists() || !ioFile.isFile() || !ioFile.canRead()) {
-                throw new IOException("Файл скрипта недоступен для чтения.");
+                throw new IOException("Файл скрипта недоступен для чтения");
+            }
+
+            String dataPath = commandArguments[1];
+            File dataFile = new File(dataPath);
+            if (!dataFile.exists() || !dataFile.isFile() || !dataFile.canRead()) {
+                throw new IOException("Файл данных недоступен для чтения");
             }
 
             try (FileInputStream fileInputStream = new FileInputStream(ioFile);
@@ -76,19 +87,15 @@ public class ExecuteScriptCommand implements CommandWithArguments {
                  Scanner scanner = new Scanner(inputStreamReader)) {
 
                 userIO = new UserIO(scanner);
-                CommandInvoker commandInvoker = new CommandInvoker(collectionManager, userIO, routeFieldsReader, script);
+                CommandInvoker commandInvoker = new CommandInvoker(collectionManager, userIO, routeFieldsReader, script, inputFile, dataPath);
 
                 while (scanner.hasNext()) {
                     commandInvoker.execute(scanner.nextLine().trim());
                 }
             }
         } catch (FileNotFoundException ex) {
-            System.err.println("Ошибка: Файл скрипта не найден.");
-        } catch (IOException ex) {
-            System.err.println("Ошибка: " + ex.getMessage());
-        } catch (IllegalArgumentException ex) {
-            System.err.println("Ошибка: " + ex.getMessage());
-        } catch (RecoursiveCallException ex) {
+            System.err.println("Ошибка: Файл скрипта не найден");
+        } catch (IOException | IllegalArgumentException | RecoursiveCallException ex) {
             System.err.println("Ошибка: " + ex.getMessage());
         } finally {
             script.removeScript(scriptPath);
