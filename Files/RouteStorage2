@@ -1,0 +1,2 @@
+id,name,coordinate_x,coordinate_y,creation_date,from_x,from_y,from_z,from_name,to_x,to_y,to_z,to_name,distance
+4,VasileostrovskyRoute,450.0,90.0,2025-02-27T12:44:20.650883+03:00[Europe/Moscow],59.9422,30,8.5,Vasileostrovskaya,59.9723,30,18.0,LakhtaCenter,25

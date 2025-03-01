@@ -11,12 +11,22 @@ repositories {
 }
 
 dependencies {
+    // Здесь могут быть зависимости, если они нужны
 }
 
 application {
-    mainClass = "org.wineeenottt.Run.Main" // Убедитесь, что это правильный путь к вашему главному классу
+    mainClass.set("org.wineeenottt.Run.Main")  // Указываем основной класс в пакете Run
 }
 
 
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "org.wineeenottt.Run.Main"
 
-
+    }
+}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}

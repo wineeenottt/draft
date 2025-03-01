@@ -90,7 +90,7 @@ public class CommandInvoker {
         hashMapCommands.put("sum_of_dictance", new SumOfDistanceCommand(collectionManager));
         hashMapCommands.put("add", new AddCommand(collectionManager, routeFieldsReader));
         hashMapCommands.put("add_if_max", new AddIfMaxCommand(collectionManager, routeFieldsReader, userIO));
-        hashMapCommands.put("update", new UpdateElementCommand(collectionManager, userIO));
+        hashMapCommands.put("update", new UpdateElementCommand(collectionManager, userIO, routeFieldsReader));
         hashMapCommands.put("remove_by_id", new RemoveByIdCommand(collectionManager));
         hashMapCommands.put("execute_script", new ExecuteScriptCommand(collectionManager, routeFieldsReader, script, inputFile, inputData));
         hashMapCommands.put("remove_greater", new RemoveGreaterCommand(collectionManager, routeFieldsReader));
@@ -107,8 +107,7 @@ public class CommandInvoker {
 
         if (hashMapCommands.containsKey(commandKey)) {
             Command command = hashMapCommands.get(commandKey);
-            if (command instanceof CommandWithArguments) {
-                CommandWithArguments commandWithArgs = (CommandWithArguments) command;
+            if (command instanceof CommandWithArguments commandWithArgs) {
                 commandWithArgs.getCommandArguments(args);
                 commandWithArgs.execute();
             } else {
@@ -125,7 +124,7 @@ public class CommandInvoker {
      */
     public void addToCommandsHistory(String string) {
         if (commandsHistoryList.size() == 11) {
-            commandsHistoryList.remove(0);
+            commandsHistoryList.removeFirst();
         }
         commandsHistoryList.add(string);
     }

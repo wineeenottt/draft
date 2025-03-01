@@ -24,3 +24,7 @@ public class Main {
         }
     }
 }
+//java -jar build/libs/ITOG-1.0-SNAPSHOT.jar Files/RouteStorage2
+//cd Desktop
+//cd IdeaProject
+//cd ITOG

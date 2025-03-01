@@ -45,11 +45,12 @@ public class CollectionManager {
         if (hashSetRouteCollection.isEmpty()) {
             System.out.println("Коллекция пуста");
         } else {
-            for (Route route : hashSetRouteCollection) {
-                System.out.println(route.toString());
-            }
+            hashSetRouteCollection.stream()
+                    .sorted(Comparator.comparing(Route::getId))
+                    .forEach(System.out::println);
         }
     }
+
 
     /**
      * Метод, удаляющий все элементы коллекции
@@ -190,7 +191,7 @@ public class CollectionManager {
                             route.setName(validateString(value));
                             break;
                         case "CoordinateX":
-                            route.setCoordinateX(parseDouble(value));
+                            route.setCoordinateX(validateCoordinateX(parseDouble(value)));
                             break;
                         case "CoordinateY":
                             route.setCoordinateY(parseFloat(value));
@@ -205,7 +206,7 @@ public class CollectionManager {
                             route.getFrom().setZ(parseDouble(value));
                             break;
                         case "LocationFromName":
-                            route.getFrom().setName(validateNullableString(value));
+                            route.getFrom().setName(validateString(value));
                             break;
                         case "LocationToX":
                             route.getTo().setX(parseFloat(value));
@@ -217,7 +218,7 @@ public class CollectionManager {
                             route.getTo().setZ(parseDouble(value));
                             break;
                         case "LocationToName":
-                            route.getTo().setName(validateNullableString(value));
+                            route.getTo().setName(validateString(value));
                             break;
                         case "Distance":
                             route.setDistance(parseLong(value));
@@ -235,6 +236,8 @@ public class CollectionManager {
             System.out.println("Маршрут с ID " + id + " не найден.");
         } catch (NumberFormatException ex) {
             System.err.println("Ошибка: Неверный формат числа (" + ex.getMessage() + ")");
+        } catch (IllegalArgumentException ex) {
+            System.err.println("Ошибка: " + ex.getMessage());
         } catch (NullPointerException ex) {
             System.err.println("Ошибка: Значение не может быть пустым");
         }
@@ -259,25 +262,38 @@ public class CollectionManager {
         if (value.isEmpty()) throw new NullPointerException("Значение не может быть пустым");
         return value;
     }
-
-    private String validateNullableString(String value) {
-        return value.isEmpty() ? null : value;
-    }
-
     private Double parseDouble(String value) {
-        return value.isEmpty() ? null : Double.parseDouble(value);
+        if (value == null || value.isEmpty()) throw new IllegalArgumentException("Значение не может быть пустым");
+        return Double.parseDouble(value);
     }
 
     private Float parseFloat(String value) {
-        return value.isEmpty() ? 0f : Float.parseFloat(value);
+        if (value == null || value.isEmpty()) throw new IllegalArgumentException("Значение не может быть пустым");
+        return Float.parseFloat(value);
     }
 
     private Integer parseInteger(String value) {
-        return value.isEmpty() ? 0 : Integer.parseInt(value);
+        if (value == null || value.isEmpty()) throw new IllegalArgumentException("Значение не может быть пустым");
+        return Integer.parseInt(value);
     }
 
     private Long parseLong(String value) {
-        if (value.isEmpty()) throw new NullPointerException("Значение не может быть пустым");
-        return Long.parseLong(value);
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException("Значение не может быть пустым");
+        }
+        long result = Long.parseLong(value);
+        if (result <= 1) {
+            throw new IllegalArgumentException("Расстояние должно быть больше 1");
+        }
+        return result;
+    }
+    private Double validateCoordinateX(Double x) {
+        if (x == null) {
+            throw new IllegalArgumentException("Координата X не может быть null");
+        }
+        if (x > 750) {
+            throw new IllegalArgumentException("Координата X не может быть больше 750");
+        }
+        return x;
     }
 }

@@ -15,6 +15,7 @@ public class RouteFieldsReader {
     private final UserIO userIO;
     private CollectionManager collectionManager;
     private Scanner scanner;
+    private boolean isFileInput = false;
     private String[] inputDataArray;
     private int inputIndex = 0;
 
@@ -23,17 +24,21 @@ public class RouteFieldsReader {
         this.collectionManager = collectionManager;
     }
 
+    // Метод для установки данных из файла
     public void setInputData(String fileName) {
         try {
             scanner = new Scanner(new File(fileName));
+            isFileInput = true; // Если данные из файла
         } catch (FileNotFoundException e) {
             System.out.println("Не удалось открыть файл: " + fileName);
             scanner = null;
+            isFileInput = false; // Если файл не найден, данные поступают из консоли
         }
         inputDataArray = null;
         inputIndex = 0;
     }
 
+    // Метод для автоматического переключения между консолью и файлом
     private String readNextValue(String val) {
         while ((inputDataArray == null || inputIndex >= inputDataArray.length) && scanner != null && scanner.hasNextLine()) {
             inputDataArray = scanner.nextLine().trim().split(",");
@@ -44,8 +49,12 @@ public class RouteFieldsReader {
             return inputDataArray[inputIndex++].trim();
         }
 
-        userIO.printCommandText(val);
-        return userIO.readLine().trim();
+        if (!isFileInput) {  // Если не из файла, то это консоль
+            userIO.printCommandText(val);
+            return userIO.readLine().trim();
+        }
+
+        return ""; // Пустое значение при завершении данных из файла
     }
 
     public String readName() {
@@ -145,4 +154,12 @@ public class RouteFieldsReader {
             }
         }
     }
+    public String readUpdateFieldName() {
+        return readNextValue("Введите имя поля: ");
+    }
+
+    public String readUpdateFieldValue() {
+        return readNextValue("Введите новое значение поля: ");
+    }
+
 }
